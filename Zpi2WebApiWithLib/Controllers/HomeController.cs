@@ -37,7 +37,18 @@ namespace Zpi2WebApiWithLib.Controllers
             var fileName = Path.GetFileName(file.FileName);
             var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
             file.SaveAs(path);
-            file
+
+            var proc = new System.Diagnostics.Process();
+            proc.StartInfo.FileName = @"C:\Windows\Microsoft.NET\Framework\v4.0.30319\aspnet_regiis.exe ";
+            proc.StartInfo.Arguments = string.Format(@"{0}");
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.Start();
+            string outPut = proc.StandardOutput.ReadToEnd();
+
+            proc.WaitForExit();
+            var exitCode = proc.ExitCode;
+            proc.Close();
 
             return View("CheckSumResult");
         }
