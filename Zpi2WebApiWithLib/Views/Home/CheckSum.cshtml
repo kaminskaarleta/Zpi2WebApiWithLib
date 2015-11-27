@@ -1,4 +1,4 @@
-﻿
+﻿@model Zpi2WebApiWithLib.Models.ResponseModel
 @{
     ViewBag.Title = "File check sum";
 }
@@ -10,11 +10,12 @@
     <label for="file">Filename:</label>
     <input type="file" name="file" id="file" />
 
-    <select class="form-control">
+    <select class="form-control" name="type" id="name">
         <option value="0">MD5</option>
         <option value="1">SHA1</option>
     </select>
 
 
-    <input type="button" class="btn btn-primary" value="Calculate" />
+    <input id="submitButton" type="submit" class="btn btn-primary" value="Calculate" />
 </form>
+

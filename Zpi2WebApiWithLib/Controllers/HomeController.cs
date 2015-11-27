@@ -31,14 +31,15 @@ namespace Zpi2WebApiWithLib.Controllers
 
             if (file == null || file.ContentLength == 0)
             {
-                return Json(0);
-                
+                return View("CheckSumResult", ResponseModel.ErrorResponse("Brak pliku"));
+
             }
             var fileName = Path.GetFileName(file.FileName);
             var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
             file.SaveAs(path);
+            file
 
-            return Json(4);
+            return View("CheckSumResult");
         }
     }
 }
