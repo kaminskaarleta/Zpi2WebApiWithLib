@@ -5,3 +5,16 @@
 
 <h2>File check sum</h2>
 
+<form id="checkSumForm" action="@Url.Action("CalculateSum","Home")" method="post" enctype="multipart/form-data">
+
+    <label for="file">Filename:</label>
+    <input type="file" name="file" id="file" />
+
+    <select class="form-control">
+        <option value="0">MD5</option>
+        <option value="1">SHA1</option>
+    </select>
+
+
+    <input type="button" class="btn btn-primary" value="Calculate" />
+</form>
