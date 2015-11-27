@@ -13,17 +13,13 @@ namespace Zpi2WebApiWithLib.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult CheckSum()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult FileCrypt()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
     }
