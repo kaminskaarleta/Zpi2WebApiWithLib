@@ -113,7 +113,7 @@ namespace Zpi2WebApiWithLib.Controllers
 
             file.SaveAs(fileToDecryptPath);
 
-            EncryptLibrary.FileCryptography.EncryptFile(fileToDecryptPath, decryptedFilePath, key);
+            EncryptLibrary.FileCryptography.DecryptFile(fileToDecryptPath, decryptedFilePath, key);
 
             if (System.IO.File.Exists(fileToDecryptPath))
             {
@@ -126,6 +126,10 @@ namespace Zpi2WebApiWithLib.Controllers
                 bytes = System.IO.File.ReadAllBytes(decryptedFilePath);
                 System.IO.File.Delete(decryptedFilePath);
             }
+            var text1 = System.Text.Encoding.ASCII.GetString(bytes);
+            var text2 = System.Text.Encoding.UTF32.GetString(bytes);
+            var text3 = System.Text.Encoding.Unicode.GetString(bytes);
+            var text4 = System.Text.Encoding.Default.GetString(bytes);
 
             return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "decrypted.txt");
         }

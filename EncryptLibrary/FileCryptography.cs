@@ -10,17 +10,15 @@ namespace EncryptLibrary
 {
     public class FileCryptography
     {
+        private static byte[] salt = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
         public static void EncryptFile(string inputFile, string outputFile, string skey)
         {
             try
             {
-                using (RijndaelManaged aes = new RijndaelManaged())
+                using (Aes aes = new AesManaged())
                 {
-                    //byte[] key = ASCIIEncoding.UTF8.GetBytes(skey);
-
-                    //byte[] IV = ASCIIEncoding.UTF8.GetBytes("HR$2pIjHR$2pIj12");
-                    var key = new Rfc2898DeriveBytes(skey, 16);
+                    var key = new Rfc2898DeriveBytes(skey, salt);
 
                     aes.Key = key.GetBytes(aes.KeySize / 8);
                     aes.IV = key.GetBytes(aes.BlockSize / 8);
@@ -54,12 +52,9 @@ namespace EncryptLibrary
         {
             try
             {
-                using (RijndaelManaged aes = new RijndaelManaged())
+                using (Aes aes = new AesManaged() { KeySize = 256, BlockSize = 128 })
                 {
-                    //byte[] key = ASCIIEncoding.UTF8.GetBytes(skey);
-
-                    //byte[] IV = ASCIIEncoding.UTF8.GetBytes("HR$2pIjHR$2pIj12");
-                    var key = new Rfc2898DeriveBytes(skey, 16);
+                    var key = new Rfc2898DeriveBytes(skey, salt);
 
                     aes.Key = key.GetBytes(aes.KeySize / 8);
                     aes.IV = key.GetBytes(aes.BlockSize / 8);
@@ -83,7 +78,7 @@ namespace EncryptLibrary
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
