@@ -35,26 +35,14 @@ namespace Zpi2WebApiWithLib.Controllers
 
             }
             var fileName = "file_" + Guid.NewGuid().ToString();
-            var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
-            file.SaveAs(path);
+            var filePath = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
+            file.SaveAs(filePath);
 
-            string result = null;
-            switch (type)
-            {
-                case FileCheckSumType.MD5:
-                    result = EncryptLibrary.CheckSum.CalculateMD5(path);
-                    break;
-                case FileCheckSumType.SHA1:
-                    result = EncryptLibrary.CheckSum.CalculateSHA1(path);
-                    break;
-            }
+            var response = PrepareResponse(filePath, type);
 
-            if (System.IO.File.Exists(path))
-            {
-                System.IO.File.Delete(path);
-            }
+            RemoveFileIfExist(filePath);
 
-            return View("CheckSumResult", ResponseModel.SuccessResponse(result));
+            return View("CheckSumResult", response);
         }
 
         [HttpPost]
@@ -76,19 +64,20 @@ namespace Zpi2WebApiWithLib.Controllers
             var encryptedFilePath = Path.Combine(Server.MapPath("~/App_Data/"), encryptedFileName);
             file.SaveAs(fileToEncryptPath);
 
-            EncryptLibrary.FileCryptography.EncryptFile(fileToEncryptPath, encryptedFilePath, key);
-
-            if (System.IO.File.Exists(fileToEncryptPath))
+            try
             {
-                System.IO.File.Delete(fileToEncryptPath);
+                EncryptLibrary.FileCryptography.EncryptFile(fileToEncryptPath, encryptedFilePath, key);
+            }
+            catch
+            {
+                return View("FileCryptResult", ResponseModel.ErrorResponse("Error on encrypting file"));
+            }
+            finally
+            {
+                RemoveFileIfExist(fileToEncryptPath);
             }
 
-            var bytes = new byte[0];
-            if (System.IO.File.Exists(encryptedFilePath))
-            {
-                bytes = System.IO.File.ReadAllBytes(encryptedFilePath);
-                System.IO.File.Delete(encryptedFilePath);
-            }
+            var bytes = ReadAndDeleteFile(encryptedFilePath);
 
             return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "encrypted.txt");
         }
@@ -113,25 +102,66 @@ namespace Zpi2WebApiWithLib.Controllers
 
             file.SaveAs(fileToDecryptPath);
 
-            EncryptLibrary.FileCryptography.DecryptFile(fileToDecryptPath, decryptedFilePath, key);
-
-            if (System.IO.File.Exists(fileToDecryptPath))
+            try
             {
-                System.IO.File.Delete(fileToDecryptPath);
+                EncryptLibrary.FileCryptography.DecryptFile(fileToDecryptPath, decryptedFilePath, key);
+            }
+            catch
+            {
+                return View("FileCryptResult", ResponseModel.ErrorResponse("Error on decrypting file"));
+            }
+            finally
+            {
+                RemoveFileIfExist(fileToDecryptPath);
             }
 
-            var bytes = new byte[0];
-            if (System.IO.File.Exists(decryptedFilePath))
-            {
-                bytes = System.IO.File.ReadAllBytes(decryptedFilePath);
-                System.IO.File.Delete(decryptedFilePath);
-            }
-            var text1 = System.Text.Encoding.ASCII.GetString(bytes);
-            var text2 = System.Text.Encoding.UTF32.GetString(bytes);
-            var text3 = System.Text.Encoding.Unicode.GetString(bytes);
-            var text4 = System.Text.Encoding.Default.GetString(bytes);
+            var bytes = ReadAndDeleteFile(decryptedFilePath);
 
             return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "decrypted.txt");
+        }
+
+        private byte[] ReadAndDeleteFile(string encryptedFilePath)
+        {
+            var bytes = new byte[0];
+            if (System.IO.File.Exists(encryptedFilePath))
+            {
+                bytes = System.IO.File.ReadAllBytes(encryptedFilePath);
+                System.IO.File.Delete(encryptedFilePath);
+            }
+            return bytes;
+        }
+
+        private void RemoveFileIfExist(string filePath)
+        {
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
+
+        private ResponseModel PrepareResponse(string filePath, FileCheckSumType type)
+        {
+            var responseModel = new ResponseModel();
+
+            try
+            {
+                switch (type)
+                {
+                    case FileCheckSumType.MD5:
+                        responseModel.Data = EncryptLibrary.CheckSum.CalculateMD5(filePath);
+                        break;
+                    case FileCheckSumType.SHA1:
+                        responseModel.Data = EncryptLibrary.CheckSum.CalculateSHA1(filePath);
+                        break;
+                }
+                responseModel.Result = true;
+            }
+            catch (Exception)
+            {
+                responseModel.Data = "Error on checksum calculating";
+            }
+
+            return responseModel;
         }
     }
 }

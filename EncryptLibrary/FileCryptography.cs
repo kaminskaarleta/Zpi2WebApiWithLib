@@ -42,10 +42,7 @@ namespace EncryptLibrary
                     }
                 }
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            catch { throw; }
         }
 
         public static void DecryptFile(string inputFile, string outputFile, string skey)
@@ -78,10 +75,7 @@ namespace EncryptLibrary
                     }
                 }
             }
-            catch (Exception e)
-            {
-                throw;
-            }
+            catch { throw; }
         }
     }
 }
