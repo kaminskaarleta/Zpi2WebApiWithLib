@@ -175,6 +175,12 @@
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EncryptLibrary\EncryptLibrary.csproj">
+      <Project>{5fe2ae4b-68de-41a5-9417-8567149b35dc}</Project>
+      <Name>EncryptLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

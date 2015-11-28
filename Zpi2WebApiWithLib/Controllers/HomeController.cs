@@ -34,21 +34,28 @@ namespace Zpi2WebApiWithLib.Controllers
                 return View("CheckSumResult", ResponseModel.ErrorResponse("Brak pliku"));
 
             }
-            //var fileName = Path.GetFileName(file.FileName);
-            //var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
-            //file.SaveAs(path);
+            var fileId = Guid.NewGuid().ToString();
+            var fileName = "file_" + fileId;
+            var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
+            file.SaveAs(path);
 
-            //System.Diagnostics.Process clientProcess = new System.Diagnostics.Process();
-            //clientProcess.StartInfo.FileName = "java";
-            //clientProcess.StartInfo.WorkingDirectory = Server.MapPath("~/App_Data/");
-            //clientProcess.StartInfo.Arguments = @"-jar lib.jar Encrypt " + path + " x.txt pass";
-            //clientProcess.Start();
-            //clientProcess.WaitForExit();
-            //bool res = clientProcess.ExitCode != 0;
+            string result = null;
+            switch (type)
+            {
+                case FileCheckSumType.MD5:
+                    result = EncryptLibrary.CheckSum.CalculateMD5(path);
+                    break;
+                case FileCheckSumType.SHA1:
+                    result = EncryptLibrary.CheckSum.CalculateSHA1(path);
+                    break;
+            }
 
+            if (System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
 
-
-            return View("CheckSumResult");
+            return View("CheckSumResult", ResponseModel.SuccessResponse(result));
         }
     }
 }
