@@ -31,11 +31,10 @@ namespace Zpi2WebApiWithLib.Controllers
 
             if (file == null || file.ContentLength == 0)
             {
-                return View("CheckSumResult", ResponseModel.ErrorResponse("Brak pliku"));
+                return View("CheckSumResult", ResponseModel.ErrorResponse("No file selected"));
 
             }
-            var fileId = Guid.NewGuid().ToString();
-            var fileName = "file_" + fileId;
+            var fileName = "file_" + Guid.NewGuid().ToString();
             var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
             file.SaveAs(path);
 
@@ -56,6 +55,79 @@ namespace Zpi2WebApiWithLib.Controllers
             }
 
             return View("CheckSumResult", ResponseModel.SuccessResponse(result));
+        }
+
+        [HttpPost]
+        public ActionResult EncryptFile(HttpPostedFileBase file, string key)
+        {
+            if (file == null || file.ContentLength == 0)
+            {
+                return View("FileCryptResult", ResponseModel.ErrorResponse("No file selected"));
+            }
+            if (string.IsNullOrEmpty(key))
+            {
+                return View("FileCryptResult", ResponseModel.ErrorResponse("No key specified"));
+            }
+
+            var fileId = Guid.NewGuid().ToString();
+            var fileToEncryptName = "file_to_encrypt_" + fileId;
+            var encryptedFileName = "encrypted_file_" + fileId;
+            var fileToEncryptPath = Path.Combine(Server.MapPath("~/App_Data/"), fileToEncryptName);
+            var encryptedFilePath = Path.Combine(Server.MapPath("~/App_Data/"), encryptedFileName);
+            file.SaveAs(fileToEncryptPath);
+
+            EncryptLibrary.FileCryptography.EncryptFile(fileToEncryptPath, encryptedFilePath, key);
+
+            if (System.IO.File.Exists(fileToEncryptPath))
+            {
+                System.IO.File.Delete(fileToEncryptPath);
+            }
+
+            var bytes = new byte[0];
+            if (System.IO.File.Exists(encryptedFilePath))
+            {
+                bytes = System.IO.File.ReadAllBytes(encryptedFilePath);
+                System.IO.File.Delete(encryptedFilePath);
+            }
+
+            return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "encrypted.txt");
+        }
+
+        [HttpPost]
+        public ActionResult DecryptFile(HttpPostedFileBase file, string key)
+        {
+            if (file == null || file.ContentLength == 0)
+            {
+                return View("FileCryptResult", ResponseModel.ErrorResponse("No file selected"));
+            }
+            if (string.IsNullOrEmpty(key))
+            {
+                return View("FileCryptResult", ResponseModel.ErrorResponse("No key specified"));
+            }
+
+            var fileId = Guid.NewGuid().ToString();
+            var fileToDecryptName = "file_to_decrypt_" + fileId;
+            var decryptedFileName = "decrypted_file_" + fileId;
+            var fileToDecryptPath = Path.Combine(Server.MapPath("~/App_Data/"), fileToDecryptName);
+            var decryptedFilePath = Path.Combine(Server.MapPath("~/App_Data/"), decryptedFileName);
+
+            file.SaveAs(fileToDecryptPath);
+
+            EncryptLibrary.FileCryptography.EncryptFile(fileToDecryptPath, decryptedFilePath, key);
+
+            if (System.IO.File.Exists(fileToDecryptPath))
+            {
+                System.IO.File.Delete(fileToDecryptPath);
+            }
+
+            var bytes = new byte[0];
+            if (System.IO.File.Exists(decryptedFilePath))
+            {
+                bytes = System.IO.File.ReadAllBytes(decryptedFilePath);
+                System.IO.File.Delete(decryptedFilePath);
+            }
+
+            return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "decrypted.txt");
         }
     }
 }

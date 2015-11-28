@@ -5,3 +5,26 @@
 
 <h2>File encryption / decryption</h2>
 
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <form id="encryptForm" action="@Url.Action("EncryptFile","Home")" method="post" enctype="multipart/form-data">
+
+            <label for="file">Filename:</label>
+            <input type="file" name="file" id="file" />
+            <input type="text" name="key" id="key" />
+
+            <input id="encryptSubmitButton" type="submit" class="btn btn-primary" value="Encrypt" />
+        </form>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <form id="decryptForm" action="@Url.Action("DecryptFile","Home")" method="post" enctype="multipart/form-data">
+
+            <label for="file">Filename:</label>
+            <input type="file" name="file" id="file" />
+            <input type="text" name="key" id="key" />
+
+
+            <input id="decryptSubmitButton" type="submit" class="btn btn-primary" value="Decrypt" />
+        </form>
+    </div>
+</div>

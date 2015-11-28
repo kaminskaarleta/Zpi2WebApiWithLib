@@ -164,6 +164,7 @@
     <Content Include="Views\Home\CheckSum.cshtml" />
     <Content Include="Views\Home\FileCrypt.cshtml" />
     <Content Include="Views\Home\CheckSumResult.cshtml" />
+    <Content Include="Views\Home\FileCryptResult.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
