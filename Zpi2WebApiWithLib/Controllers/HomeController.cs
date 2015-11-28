@@ -34,21 +34,19 @@ namespace Zpi2WebApiWithLib.Controllers
                 return View("CheckSumResult", ResponseModel.ErrorResponse("Brak pliku"));
 
             }
-            var fileName = Path.GetFileName(file.FileName);
-            var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
-            file.SaveAs(path);
+            //var fileName = Path.GetFileName(file.FileName);
+            //var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
+            //file.SaveAs(path);
 
-            var proc = new System.Diagnostics.Process();
-            proc.StartInfo.FileName = @"C:\Windows\Microsoft.NET\Framework\v4.0.30319\aspnet_regiis.exe ";
-            proc.StartInfo.Arguments = string.Format(@"{0}");
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.Start();
-            string outPut = proc.StandardOutput.ReadToEnd();
+            //System.Diagnostics.Process clientProcess = new System.Diagnostics.Process();
+            //clientProcess.StartInfo.FileName = "java";
+            //clientProcess.StartInfo.WorkingDirectory = Server.MapPath("~/App_Data/");
+            //clientProcess.StartInfo.Arguments = @"-jar lib.jar Encrypt " + path + " x.txt pass";
+            //clientProcess.Start();
+            //clientProcess.WaitForExit();
+            //bool res = clientProcess.ExitCode != 0;
 
-            proc.WaitForExit();
-            var exitCode = proc.ExitCode;
-            proc.Close();
+
 
             return View("CheckSumResult");
         }
